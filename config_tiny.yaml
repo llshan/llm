@@ -1,0 +1,24 @@
+experiment_name: "tiny_toy_run"
+
+model_size: "tiny"          # 本地先跑 tiny，确认没问题再换 small
+tokenizer_name: "gpt2"
+
+data:
+  train_path: "data/wiki_toy_train.jsonl"
+  val_path: "data/wiki_toy_val.jsonl"
+  block_size: 16
+  train_batch_size: 2
+  val_batch_size: 2
+  num_workers: 0
+
+training:
+  max_epochs: 2
+  learning_rate: 2e-4
+  weight_decay: 0.01
+  warmup_steps: 10
+  accelerator: "mps"
+  devices: 1
+  precision: 32
+  log_every_n_steps: 1
+  default_root_dir: "outputs"
+
