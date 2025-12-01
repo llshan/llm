@@ -7,8 +7,8 @@ data:
   train_path: "data/processed_train/train.jsonl"
   val_path: "data/processed_train/val.jsonl"
   block_size: 128            # 数据充足了，恢复较大的 block_size
-  train_batch_size: 128      # 减小 batch size 防止 OOM
-  val_batch_size: 128 
+  train_batch_size: 64      # 减小 batch size 防止 OOM
+  val_batch_size: 64 
   num_workers: 4             # 增加 workers 以加速数据加载
 
 training:
