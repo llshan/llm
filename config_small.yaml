@@ -4,9 +4,9 @@ model_size: "small"          # 切换为 small
 tokenizer_name: "gpt2"
 
 data:
-  train_path: "data/wiki_toy_train.jsonl"
+  train_path: "data/processed_medium/wiki_original.jsonl"
   val_path: "data/wiki_toy_val.jsonl"
-  block_size: 128            # 增加 block_size 以利用 small 模型的能力 (最大支持 256)
+  block_size: 128            # 数据充足了，恢复较大的 block_size
   train_batch_size: 2        # 保持较小，防止 OOM
   val_batch_size: 2
   num_workers: 0
@@ -16,7 +16,7 @@ training:
   learning_rate: 2e-4
   weight_decay: 0.01
   warmup_steps: 10
-  accelerator: "mps"
+  accelerator: "auto"
   devices: 1
   precision: 32
   log_every_n_steps: 1
