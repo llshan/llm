@@ -7,15 +7,16 @@ data:
   train_path: "data/processed_medium/train.jsonl"  # 使用更大的数据集
   val_path: "data/processed_medium/val.jsonl"
   block_size: 128            # 增加上下文长度
-  train_batch_size: 8        # M1/M2 跑 tiny 模型可以适当加大 batch
+  train_batch_size: 8        # 降到 8 以确保显存安全
   val_batch_size: 8
   num_workers: 4             # 消除警告，加速加载
 
 training:
   max_epochs: 5              # 多跑几轮，看 loss 下降
-  learning_rate: 5e-4        # Tiny 模型可以用稍大的学习率
+  learning_rate: 2e-4        # 降低学习率以防止 NaN
   weight_decay: 0.01
-  warmup_steps: 10
+  warmup_steps: 100          # 增加 warmup 步数，让训练更稳定
+  accumulate_grad_batches: 4 # 梯度累积：8 * 4 = 32 等效 batch size
   accelerator: "mps"
   devices: 1
   precision: 32

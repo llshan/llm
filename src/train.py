@@ -57,9 +57,9 @@ def main():
 
     # PyTorch 2.0 编译优化: 显著提升训练速度
     # 注意：在 macOS (MPS) 上 torch.compile 目前支持有限，但在 Linux (CUDA) 上效果极佳
-    if hasattr(torch, "compile") and cfg["training"]["accelerator"] != "mps":
-        print("[INFO] Compiling model with torch.compile() ...")
-        model.model = torch.compile(model.model)
+    # if hasattr(torch, "compile") and cfg["training"]["accelerator"] != "mps":
+    #     print("[INFO] Compiling model with torch.compile() ...")
+    #     model.model = torch.compile(model.model)
 
     logger = TensorBoardLogger(
         save_dir=cfg["training"]["default_root_dir"],
@@ -98,6 +98,7 @@ def main():
         callbacks=[checkpoint_best_cb, checkpoint_epoch_cb],
         log_every_n_steps=cfg["training"]["log_every_n_steps"],
         gradient_clip_val=1.0,  # 防止梯度爆炸导致 Loss NaN
+        accumulate_grad_batches=cfg["training"].get("accumulate_grad_batches", 1),
     )
 
     trainer.fit(model, datamodule=dm)
