@@ -1,0 +1,23 @@
+experiment_name: "toy_run"
+
+model_size: "tiny"
+tokenizer_name: "gpt2"
+
+data:
+  train_path: "data/processed_tiny/train.jsonl"
+  val_path: "data/processed_tiny/val.jsonl"
+  block_size: 32             # Toy 数据极短，必须用小 block_size
+  train_batch_size: 2
+  val_batch_size: 2
+  num_workers: 0
+
+training:
+  max_epochs: 1
+  learning_rate: 2e-4
+  weight_decay: 0.01
+  warmup_steps: 0
+  accelerator: "auto"
+  devices: 1
+  precision: 32
+  log_every_n_steps: 1
+  default_root_dir: "outputs"
