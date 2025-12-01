@@ -5,11 +5,11 @@ tokenizer_name: "gpt2"
 
 data:
   train_path: "data/processed_medium/wiki_original.jsonl"
-  val_path: "data/wiki_toy_val.jsonl"
+  val_path: "data/processed_val_medium/wiki_original.jsonl"
   block_size: 128            # 数据充足了，恢复较大的 block_size
-  train_batch_size: 2        # 保持较小，防止 OOM
+  train_batch_size: 2
   val_batch_size: 2
-  num_workers: 0
+  num_workers: 4             # 增加 workers 以加速数据加载
 
 training:
   max_epochs: 2

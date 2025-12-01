@@ -17,6 +17,9 @@ def load_config(config_path: str):
 
 
 def main():
+    # 开启 Tensor Cores 加速 (A100/A6000/A4500 等安培架构及以上显卡必备)
+    torch.set_float32_matmul_precision("medium")
+
     parser = ArgumentParser()
     parser.add_argument("--config", type=str, required=True)
     args = parser.parse_args()
