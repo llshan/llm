@@ -97,6 +97,7 @@ def main():
         logger=logger,
         callbacks=[checkpoint_best_cb, checkpoint_epoch_cb],
         log_every_n_steps=cfg["training"]["log_every_n_steps"],
+        gradient_clip_val=1.0,  # 防止梯度爆炸导致 Loss NaN
     )
 
     trainer.fit(model, datamodule=dm)
