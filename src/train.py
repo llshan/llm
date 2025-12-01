@@ -55,20 +55,38 @@ def main():
         total_steps=total_steps,
     )
 
+    # PyTorch 2.0 编译优化: 显著提升训练速度
+    # 注意：在 macOS (MPS) 上 torch.compile 目前支持有限，但在 Linux (CUDA) 上效果极佳
+    if hasattr(torch, "compile") and cfg["training"]["accelerator"] != "mps":
+        print("[INFO] Compiling model with torch.compile() ...")
+        model.model = torch.compile(model.model)
+
     logger = TensorBoardLogger(
         save_dir=cfg["training"]["default_root_dir"],
         name=cfg["experiment_name"],
     )
 
-    checkpoint_cb = ModelCheckpoint(
+    # 策略1: 保存 val_loss 最好的 Top-3 模型
+    checkpoint_best_cb = ModelCheckpoint(
         dirpath=os.path.join(
             cfg["training"]["default_root_dir"], cfg["experiment_name"]
         ),
-        filename="{epoch}-{step}-{val_loss:.3f}",
-        save_top_k=1,
+        filename="best-{epoch}-{step}-{val_loss:.3f}",
+        save_top_k=3,
         monitor="val_loss",
         mode="min",
-        save_last=True,
+        save_last=True,  # 始终保存最后一个 checkpoint (last.ckpt)
+    )
+
+    # 策略2: 每个 Epoch 保存一次，作为定期备份 (不覆盖)
+    checkpoint_epoch_cb = ModelCheckpoint(
+        dirpath=os.path.join(
+            cfg["training"]["default_root_dir"], cfg["experiment_name"]
+        ),
+        filename="epoch-{epoch}",
+        save_top_k=-1,      # -1 表示保留所有
+        every_n_epochs=1,   # 每个 epoch 保存一次
+        save_on_train_epoch_end=True,
     )
 
     trainer = pl.Trainer(
@@ -77,7 +95,7 @@ def main():
         max_epochs=cfg["training"]["max_epochs"],
         precision=cfg["training"]["precision"],
         logger=logger,
-        callbacks=[checkpoint_cb],
+        callbacks=[checkpoint_best_cb, checkpoint_epoch_cb],
         log_every_n_steps=cfg["training"]["log_every_n_steps"],
     )
 
